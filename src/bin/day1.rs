@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 fn main() {
     println!("Hello, world!");
 }
@@ -19,9 +21,8 @@ fn part2(input: &str) -> usize {
 
     list.windows(3)
         .map(|s| s.iter().sum::<u32>())
-        .collect::<Vec<_>>()
-        .windows(2)
-        .filter(|w| w[0] < w[1])
+        .tuple_windows()
+        .filter(|(x, y)| x < y)
         .count()
 }
 
