@@ -25,7 +25,7 @@ fn tpart1_sample() {
 
 #[test]
 fn tpart1() {
-    let input = std::fs::read_to_string("inputs/day0.txt").unwrap();
+    let input = std::fs::read_to_string("inputs/dayx.txt").unwrap();
     assert_eq!(part1(&input), Part1::default())
 }
 
@@ -46,6 +46,6 @@ fn tpart2_sample() {
 
 #[test]
 fn tpart2() {
-    let input = std::fs::read_to_string("inputs/day0.txt").unwrap();
+    let input = std::fs::read_to_string("inputs/dayx.txt").unwrap();
     assert_eq!(part2(&input), Part2::default())
 }
