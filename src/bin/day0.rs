@@ -1,3 +1,6 @@
+//! This borrows a problem from a previous year
+//! to make sure that the template file is hooked up correctly.
+
 fn main() {
     println!("Hello, world!");
 }
@@ -9,6 +12,9 @@ const sample: &'static str = r#"1721
 675
 1456"#;
 
+type Part1 = Option<u32>;
+type Part2 = Option<u32>;
+
 fn parse(input: &str) -> Vec<u32> {
     input
         .lines()
@@ -16,7 +22,7 @@ fn parse(input: &str) -> Vec<u32> {
         .collect::<Vec<_>>()
 }
 
-fn part1(input: &str) -> Option<u32> {
+fn part1(input: &str) -> Part1 {
     let list = parse(input);
 
     for i in &list {
@@ -29,7 +35,7 @@ fn part1(input: &str) -> Option<u32> {
     None
 }
 
-fn part2(input: &str) -> Option<u32> {
+fn part2(input: &str) -> Part2 {
     let list = parse(input);
 
     for i in &list {
