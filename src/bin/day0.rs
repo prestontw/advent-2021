@@ -5,7 +5,7 @@ fn main() {
     println!("Hello, world!");
 }
 
-const sample: &'static str = r#"1721
+const SAMPLE: &str = r#"1721
 979
 366
 299
@@ -52,13 +52,13 @@ fn part2(input: &str) -> Part2 {
 
 #[test]
 fn tpart1_sample() {
-    let input = sample;
+    let input = SAMPLE;
     assert_eq!(part1(&input), Some(514579))
 }
 
 #[test]
 fn tpart2_sample() {
-    let input = sample;
+    let input = SAMPLE;
     assert_eq!(part2(&input), Some(241861950))
 }
 
