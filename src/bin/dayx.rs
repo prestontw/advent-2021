@@ -14,6 +14,7 @@ fn parse(input: &str) -> Vec<u32> {
 }
 
 fn part1(input: &str) -> Part1 {
+    let _input = parse(input);
     Part1::default()
 }
 
@@ -34,6 +35,7 @@ fn tpart1() {
 type Part2 = u32;
 
 fn part2(input: &str) -> Part2 {
+    let _input = parse(input);
     Part2::default()
 }
 

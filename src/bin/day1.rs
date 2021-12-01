@@ -41,6 +41,21 @@ fn tpart1_sample() {
 }
 
 #[test]
+fn tpart2_sample() {
+    let input = r#"199
+200
+208
+210
+200
+207
+240
+269
+260
+263"#;
+    assert_eq!(part2(&input), 5)
+}
+
+#[test]
 fn tpart1() {
     let input = std::fs::read_to_string("inputs/day1.txt").unwrap();
     assert_eq!(part1(&input), 1583)
