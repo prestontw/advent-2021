@@ -37,6 +37,28 @@ fn part2(input: &str) -> Option<u32> {
 }
 
 #[test]
+fn tpart1_sample() {
+    let input = r#"1721
+979
+366
+299
+675
+1456"#;
+    assert_eq!(part1(&input), Some(514579))
+}
+
+#[test]
+fn tpart2_sample() {
+    let input = r#"1721
+979
+366
+299
+675
+1456"#;
+    assert_eq!(part2(&input), Some(241861950))
+}
+
+#[test]
 fn tpart1() {
     let input = std::fs::read_to_string("inputs/day0.txt").unwrap();
     assert_eq!(part1(&input), Some(793524))
