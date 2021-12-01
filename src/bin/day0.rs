@@ -2,11 +2,22 @@ fn main() {
     println!("Hello, world!");
 }
 
-fn part1(input: &str) -> Option<u32> {
-    let list = input
+const sample: &'static str = r#"1721
+979
+366
+299
+675
+1456"#;
+
+fn parse(input: &str) -> Vec<u32> {
+    input
         .lines()
         .map(|s| s.parse::<u32>().unwrap())
-        .collect::<Vec<_>>();
+        .collect::<Vec<_>>()
+}
+
+fn part1(input: &str) -> Option<u32> {
+    let list = parse(input);
 
     for i in &list {
         for j in &list {
@@ -19,10 +30,7 @@ fn part1(input: &str) -> Option<u32> {
 }
 
 fn part2(input: &str) -> Option<u32> {
-    let list = input
-        .lines()
-        .map(|s| s.parse::<u32>().unwrap())
-        .collect::<Vec<_>>();
+    let list = parse(input);
 
     for i in &list {
         for j in &list {
@@ -38,23 +46,13 @@ fn part2(input: &str) -> Option<u32> {
 
 #[test]
 fn tpart1_sample() {
-    let input = r#"1721
-979
-366
-299
-675
-1456"#;
+    let input = sample;
     assert_eq!(part1(&input), Some(514579))
 }
 
 #[test]
 fn tpart2_sample() {
-    let input = r#"1721
-979
-366
-299
-675
-1456"#;
+    let input = sample;
     assert_eq!(part2(&input), Some(241861950))
 }
 
