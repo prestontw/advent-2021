@@ -1,3 +1,5 @@
+use regex::Match;
+
 /// # Examples
 /// ```
 /// # use advent_2021::blank_lines;
@@ -44,3 +46,17 @@ pub fn digits(num: &str) -> Vec<u32> {
 }
 
 // could add lines, commas, spaces, memoize, regex things next
+
+/// # Examples
+/// ```
+/// # use advent_2021::extract_values;
+/// let re = regex::Regex::new(r"(\w*) (\w*) bags contain (.*)\.").unwrap();
+/// assert_eq!(extract_values(&re, "muted tomato bags contain 1 bright brown bag."),
+/// vec!["muted", "tomato", "1 bright brown bag"]);
+/// ```
+pub fn extract_values<'source>(re: &regex::Regex, s: &'source str) -> Vec<&'source str> {
+    re.captures_iter(s)
+        .flat_map(|capture| capture.iter().skip(1).collect::<Vec<_>>())
+        .filter_map(|c: Option<Match>| c.map(|c| c.as_str()))
+        .collect()
+}
