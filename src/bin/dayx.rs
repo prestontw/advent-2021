@@ -4,7 +4,7 @@ fn main() {
 
 const SAMPLE: &str = r#""#;
 
-type Part1 = u32;
+type Part1 = usize;
 
 fn parse(input: &str) -> Vec<u32> {
     input
@@ -32,7 +32,7 @@ fn tpart1() {
 ////////////////////////////////////////////////
 ///  start part 2
 ////////////////////////////////////////////////
-type Part2 = u32;
+type Part2 = Part1;
 
 fn part2(input: &str) -> Part2 {
     let _input = parse(input);
