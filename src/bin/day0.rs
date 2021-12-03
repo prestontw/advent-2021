@@ -16,10 +16,11 @@ type Part1 = Option<u32>;
 type Part2 = Option<u32>;
 
 fn parse(input: &str) -> Vec<u32> {
-    input
-        .lines()
-        .map(|s| s.parse::<u32>().unwrap())
-        .collect::<Vec<_>>()
+    use advent_2021::regex;
+    let re = regex!(r"(\d+)");
+    re.captures_iter(input)
+        .map(|capture| capture[0].parse().unwrap())
+        .collect()
 }
 
 fn part1(input: &str) -> Part1 {
