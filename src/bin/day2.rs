@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use advent_2021::regex;
 use itertools::Itertools;
 
 fn main() {
@@ -39,19 +40,13 @@ struct Move {
 }
 
 fn parse(input: &str) -> Vec<Move> {
-    input
-        .lines()
-        .map(|s| {
-            s.split(" ")
-                .tuples()
-                .map(|(dir, amount)| Move {
-                    direction: dir.parse::<Directions>().unwrap(),
-                    distance: amount.parse::<usize>().unwrap(),
-                })
-                .next()
-                .unwrap()
+    let re = regex!(r"(\w+) (\d+)");
+    re.captures_iter(input)
+        .map(|capture| Move {
+            direction: capture[1].parse().unwrap(),
+            distance: capture[2].parse().unwrap(),
         })
-        .collect::<Vec<_>>()
+        .collect()
 }
 
 fn part1(input: &str) -> Part1 {

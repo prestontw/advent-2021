@@ -60,3 +60,11 @@ pub fn extract_values<'source>(re: &regex::Regex, s: &'source str) -> Vec<&'sour
         .filter_map(|c: Option<Match>| c.map(|c| c.as_str()))
         .collect()
 }
+
+#[macro_export]
+macro_rules! regex {
+    ($re:literal $(,)?) => {{
+        static RE: once_cell::sync::OnceCell<regex::Regex> = once_cell::sync::OnceCell::new();
+        RE.get_or_init(|| regex::Regex::new($re).unwrap())
+    }};
+}
