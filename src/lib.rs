@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+use std::hash::Hash;
+
 use regex::Match;
 
 /// # Examples
@@ -34,6 +37,18 @@ pub fn blank_lines(s: &str) -> Vec<Vec<&str>> {
 /// ```
 pub fn manhattan_distance<I: num_traits::Num + num_traits::Signed>(x: I, y: I) -> I {
     x.abs() + y.abs()
+}
+
+pub fn counts<I, E>(i: I) -> HashMap<E, usize>
+where
+    I: IntoIterator<Item = E>,
+    E: Clone + Hash + Eq,
+{
+    i.into_iter().fold(HashMap::new(), |mut counts, item| {
+        let count = counts.entry(item).or_insert(0);
+        *count += 1;
+        counts
+    })
 }
 
 /// # Examples

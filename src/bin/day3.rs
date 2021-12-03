@@ -2,7 +2,7 @@ fn main() {
     println!("Hello, world!");
 }
 
-use advent_2021::regex;
+use advent_2021::{counts, regex};
 const SAMPLE: &str = r#"00100
 11110
 10110
@@ -30,15 +30,9 @@ fn part1(input: &str) -> Part1 {
     let len = input[0].len();
     let mut ret = String::new();
     for index in 0..len {
-        let mut ones = 0;
-        let mut zeros = 0;
-        for line in &input {
-            if line.chars().nth(index).unwrap() == '1' {
-                ones += 1;
-            } else {
-                zeros += 1;
-            }
-        }
+        let counts = counts(input.iter().map(|line| line.chars().nth(index).unwrap()));
+        let ones = counts[&'1'];
+        let zeros = counts[&'0'];
         ret += if ones > zeros { "1" } else { "0" };
     }
     let gamma_rate = usize::from_str_radix(&ret, 2).unwrap();
@@ -64,38 +58,33 @@ type Part2 = Part1;
 
 fn part2(input: &str) -> Part2 {
     let input = parse(input);
-    let filter = |mut candidates: Vec<String>, f: &dyn Fn(i32, i32) -> char| {
-        let len = input[0].len();
-        let mut ret = String::new();
+    let filter = |mut candidates: Vec<String>, f: &dyn Fn(usize, usize) -> char| {
         let mut index = 0;
         while candidates.len() != 1 {
-            let mut ones = 0;
-            let mut zeros = 0;
-            for line in &candidates {
-                if line.chars().nth(index).unwrap() == '1' {
-                    ones += 1;
-                } else {
-                    zeros += 1;
-                }
-            }
-            let desired = dbg!(f(ones, zeros));
+            let counts = counts(
+                candidates
+                    .iter()
+                    .map(|line| line.chars().nth(index).unwrap()),
+            );
+            let ones = counts[&'1'];
+            let zeros = counts[&'0'];
+
+            let desired = f(ones, zeros);
             candidates = candidates
                 .into_iter()
                 .filter(|line| line.chars().nth(index).unwrap() == desired)
                 .collect();
-            dbg!(&candidates);
             index += 1;
         }
         usize::from_str_radix(&candidates[0], 2).unwrap()
     };
     let o2 = filter(input.clone(), &|ones, zeros| {
-        if dbg!(ones) >= dbg!(zeros) {
+        if ones >= zeros {
             '1'
         } else {
             '0'
         }
     });
-    // debug_assert!(dbg!(o2) == 23);
     let co2 = filter(input.clone(), &|ones, zeros| {
         if ones < zeros {
             '1'
