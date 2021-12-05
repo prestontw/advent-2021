@@ -39,6 +39,10 @@ pub fn manhattan_distance<I: num_traits::Num + num_traits::Signed>(x: I, y: I) -
     x.abs() + y.abs()
 }
 
+pub fn abs_diff(n1: u32, n2: u32) -> u32 {
+    n1.max(n2) - n1.min(n2)
+}
+
 pub fn counts<I, E>(i: I) -> HashMap<E, usize>
 where
     I: IntoIterator<Item = E>,
