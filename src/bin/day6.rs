@@ -82,6 +82,7 @@ fn num_produced(r: &Rabbit) -> usize {
             (age / 7)
                 + ((7..)
                     .step_by(7)
+                    .take(100)
                     .filter_map(|year_diff| age.checked_sub(year_diff + 2))
                     .map(|na| num_produced(&Rabbit::Mature(na)))
                     .sum::<usize>())
