@@ -62,33 +62,25 @@ enum Rabbit {
     Mature(usize),
 }
 fn num_produced(r: &Rabbit) -> usize {
-    println!("Called for {:?}", r);
-    {
-        if let Some(result) = MEMO_DATA.lock().unwrap().get(r) {
-            return *result;
-        }
+    if let Some(result) = MEMO_DATA.lock().unwrap().get(r) {
+        return *result;
     }
-    println!("Computing for {:?}", r);
 
     use Rabbit::*;
-    // divide to see the number this produces if it's mature, if it's youth, subtract then divide
     let result = match r {
         Mature(age) => {
-            if age < &7 {
-                return 0;
-            }
             (age / 7)
                 + ((7..)
                     .step_by(7)
-                    .take(100)
+                    .take_while(|increment| increment + 2 <= *age)
                     .filter_map(|year_diff| age.checked_sub(year_diff + 2))
                     .map(|na| num_produced(&Rabbit::Mature(na)))
                     .sum::<usize>())
         }
     };
-    {
-        MEMO_DATA.lock().unwrap().insert(r.clone(), result);
-    }
+
+    MEMO_DATA.lock().unwrap().insert(r.clone(), result);
+
     result
 }
 fn part2(input: &str) -> Part2 {
