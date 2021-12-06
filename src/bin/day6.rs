@@ -7,14 +7,20 @@ const SAMPLE: &str = r#"3,4,3,1,2"#;
 type Part1 = usize;
 
 fn parse(input: &str) -> Vec<u32> {
-    input.split(',').filter_map(|s| s.parse().ok()).collect()
+    input
+        .lines()
+        .next()
+        .unwrap()
+        .split(',')
+        .filter_map(|s| s.parse().ok())
+        .collect()
 }
 
 fn part1(input: &str) -> Part1 {
     let mut input = parse(input);
     for _day in 0..80 {
         let starting_pos = input.len();
-        for index in (0..starting_pos).rev() {
+        for index in (0..starting_pos) {
             if input[index] == 0 {
                 input[index] = 6;
                 input.push(8);
