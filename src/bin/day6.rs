@@ -1,6 +1,5 @@
 use std::{collections::HashMap, sync::Mutex};
 
-use num_traits::Num;
 use once_cell::sync::Lazy;
 
 fn main() {
@@ -61,7 +60,6 @@ static MEMO_DATA: Lazy<Mutex<HashMap<Rabbit, usize>>> = Lazy::new(|| {
 #[derive(Hash, Eq, Clone, Copy, PartialEq, Debug)]
 enum Rabbit {
     Mature(usize),
-    Youth(usize),
 }
 fn num_produced(r: &Rabbit) -> usize {
     println!("Called for {:?}", r);
@@ -87,7 +85,6 @@ fn num_produced(r: &Rabbit) -> usize {
                     .map(|na| num_produced(&Rabbit::Mature(na)))
                     .sum::<usize>())
         }
-        Youth(age) => (age.checked_sub(2).unwrap_or_default()) / 7,
     };
     {
         MEMO_DATA.lock().unwrap().insert(r.clone(), result);
@@ -95,12 +92,13 @@ fn num_produced(r: &Rabbit) -> usize {
     result
 }
 fn part2(input: &str) -> Part2 {
-    let mut input = parse(input);
-    input
-        .into_iter()
-        .map(|starting| Rabbit::Mature(256 + (7 - starting - 1) as usize))
-        .map(|r| num_produced(&r))
-        .sum()
+    let input = parse(input);
+    input.len()
+        + input
+            .into_iter()
+            .map(|starting| Rabbit::Mature(256 + (7 - starting - 1) as usize))
+            .map(|r| num_produced(&r))
+            .sum::<Part2>()
 }
 
 #[test]
@@ -111,5 +109,5 @@ fn tpart2_sample() {
 #[test]
 fn tpart2() {
     let input = std::fs::read_to_string("inputs/day6.txt").unwrap();
-    assert_eq!(part2(&input), 0)
+    assert_eq!(part2(&input), 1749945484935)
 }
