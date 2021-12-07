@@ -7,7 +7,7 @@ const SAMPLE: &str = r#""#;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::sync::Mutex;
-static MEMO_DATA: Lazy<Mutex<HashMap<i32, String>>> = Lazy::new(|| {
+static MEMO_DATA: Lazy<Mutex<HashMap<usize, usize>>> = Lazy::new(|| {
     let hm = HashMap::new();
     Mutex::new(hm)
 });
@@ -15,21 +15,40 @@ static MEMO_DATA: Lazy<Mutex<HashMap<i32, String>>> = Lazy::new(|| {
 type Part1 = usize;
 
 fn parse(input: &str) -> Vec<u32> {
+    static RE: once_cell::sync::OnceCell<HashMap<(), ()>> = once_cell::sync::OnceCell::new();
+    RE.get_or_init(|| {
+        println!("initializing");
+        HashMap::new()
+    });
     input
         .lines()
         .map(|s| s.parse::<u32>().unwrap())
         .collect::<Vec<_>>()
 }
 
-fn part1(input: &str) -> Part1 {
-    let _input = parse(input);
-    let data = MEMO_DATA.lock().unwrap().insert(3, "hellov".into());
+fn fib(n: usize) -> usize {
+    if n == 1 || n == 0 {
+        return 1;
+    }
+    if let Some(ret) = MEMO_DATA.lock().unwrap().get(&n) {
+        return *ret;
+    }
+    println!("calculating for {}", n);
+    let new = fib(n - 1) + fib(n - 2);
+    MEMO_DATA.lock().unwrap().insert(n, new);
+    new
+}
+
+fn part1(_input: &str) -> Part1 {
+    fib(5);
+    fib(5);
+    fib(3);
     Part1::default()
 }
 
 #[test]
 fn tpart1_sample() {
-    assert_eq!(part1(&SAMPLE), Part1::default())
+    assert_eq!(part1(&SAMPLE), 0)
 }
 
 #[test]
