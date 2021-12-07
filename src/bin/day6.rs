@@ -49,6 +49,7 @@ fn tpart1() {
 
 ////////////////////////////////////////////////
 ///  start part 2
+/// Can do age counts rather than individuals. Similar to fibd from rosalind
 ////////////////////////////////////////////////
 type Part2 = Part1;
 
