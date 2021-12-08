@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use std::collections::HashSet;
 fn main() {
     println!("Hello, world!");
@@ -30,14 +29,6 @@ fn parse(input: &str) -> Vec<(Vec<&str>, Vec<&str>)> {
             )
         })
         .collect()
-    // re.captures_iter(input)
-    //     .map(|capture| {
-    //         let pieces = capture.len() - 1;
-    //         (0..pieces)
-    //             .map(move |piece| capture[piece].trim().to_string())
-    //             .collect()
-    //     })
-    //     .collect()
 }
 
 fn part1(input: &str) -> Part1 {
@@ -47,7 +38,7 @@ fn part1(input: &str) -> Part1 {
         .map(|(_, line)| {
             line.into_iter()
                 .filter(|word| {
-                    let len = (dbg!(word)).len();
+                    let len = word.len();
                     len == 2 || len == 3 || len == 4 || len == 7
                 })
                 .count()
@@ -71,18 +62,24 @@ fn tpart1() {
 ////////////////////////////////////////////////
 type Part2 = Part1;
 
+/// Test if a function is a nine by seeing if a `4` fits in it.
+/// Umm, this and the other functions kind of rely on already having checked
+/// that the potential number has the appropriate length---6 in this case.
 fn is_nine(four: &HashSet<char>, potential_nine: &HashSet<char>) -> bool {
     four.difference(potential_nine).count() == 0
 }
 
+/// Test if a function is a five by seeing if it fits in a `6`.
 fn is_five(six: &HashSet<char>, potential_five: &HashSet<char>) -> bool {
     potential_five.difference(six).count() == 0
 }
 
+/// Test if a function is a three by seeing if a `7` fits in it.
 fn is_three(seven: &HashSet<char>, potential_three: &HashSet<char>) -> bool {
     seven.difference(potential_three).count() == 0
 }
 
+/// Test if a function is a zero by seeing if a `7` fits in it.
 fn is_zero(seven: &HashSet<char>, potential: &HashSet<char>) -> bool {
     seven.difference(potential).count() == 0
 }
@@ -91,12 +88,12 @@ fn part2(input: &str) -> Part2 {
     let input = parse(input);
     input
         .into_iter()
-        .map(|(clues, digits)| {
+        .map(|(clues, hidden_number)| {
             let clues = clues
                 .into_iter()
                 .map(|word| HashSet::from_iter(word.chars()))
                 .collect::<Vec<_>>();
-            let one = (clues.iter().find(|word| word.len() == 2).unwrap());
+            let one = clues.iter().find(|word| word.len() == 2).unwrap();
             let eight = clues.iter().find(|word| word.len() == 7).unwrap();
             let seven = clues.iter().find(|word| word.len() == 3).unwrap();
             let four = clues.iter().find(|word| word.len() == 4).unwrap();
@@ -127,14 +124,12 @@ fn part2(input: &str) -> Part2 {
                 .find(|&potential| potential.len() == 5 && potential != three && potential != five)
                 .unwrap();
 
-            let lookup = dbg!(vec![
-                zero, one, two, three, four, five, six, seven, eight, nine
-            ]);
+            let lookup = vec![zero, one, two, three, four, five, six, seven, eight, nine];
 
-            let num = digits
+            let num = hidden_number
                 .into_iter()
-                .map(|word| {
-                    let hs: HashSet<_> = dbg!(word.chars().collect());
+                .map(|digit| {
+                    let hs: HashSet<_> = digit.chars().collect();
                     lookup
                         .iter()
                         .enumerate()
@@ -149,7 +144,7 @@ fn part2(input: &str) -> Part2 {
                         .unwrap()
                 })
                 .collect::<String>();
-            (dbg!(num)).parse::<usize>().unwrap()
+            num.parse::<usize>().unwrap()
         })
         .sum()
 }
