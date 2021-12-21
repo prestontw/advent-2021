@@ -2,6 +2,7 @@ fn main() {
     println!("Hello, world!");
 }
 
+const INPUT_PATH: &str = "inputs/dayx.txt";
 const SAMPLE: &str = r#""#;
 
 type Part1 = usize;
@@ -26,7 +27,7 @@ fn tpart1_sample() {
 
 #[test]
 fn tpart1() {
-    let input = std::fs::read_to_string("inputs/dayx.txt").unwrap();
+    let input = std::fs::read_to_string(&INPUT_PATH).unwrap();
     assert_eq!(part1(&input), Part1::default())
 }
 
@@ -47,6 +48,6 @@ fn tpart2_sample() {
 
 #[test]
 fn tpart2() {
-    let input = std::fs::read_to_string("inputs/dayx.txt").unwrap();
+    let input = std::fs::read_to_string(INPUT_PATH).unwrap();
     assert_eq!(part2(&input), Part2::default())
 }
