@@ -215,6 +215,34 @@ impl Layer {
         {
             return vec![other];
         }
+        let up = Layer {
+            direction: other.direction.clone(),
+            zmin: other.zmin,
+            zmax: other.zmax,
+            ymax: other.ymax,
+            ymin: self.ymax + 1,
+        };
+        let left = Layer {
+            direction: other.direction.clone(),
+            ymax: self.ymax,
+            ymin: self.ymin,
+            zmin: other.zmin,
+            zmax: self.zmin - 1,
+        };
+        let right = Layer {
+            ymax: self.ymax,
+            ymin: self.ymin,
+            zmin: self.zmax + 1,
+            zmax: other.zmax,
+            direction: other.direction.clone(),
+        };
+        let down = Layer {
+            direction: other.direction.clone(),
+            zmin: other.zmin,
+            zmax: other.zmax,
+            ymax: self.ymin - 1,
+            ymin: other.ymin,
+        };
         match (
             other.ymin >= self.ymin,
             other.ymax <= self.ymax,
@@ -225,55 +253,22 @@ impl Layer {
             (true, true, true, true) => vec![],
             // it contains us... we will fight on! And carve it into four chunks!
             (false, false, false, false) => {
-                let up = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: other.ymax,
-                    ymin: self.ymax + 1,
-                };
-                let left = Layer {
-                    direction: other.direction.clone(),
-                    ymax: self.ymax,
-                    ymin: self.ymin,
-                    zmin: other.zmin,
-                    zmax: self.zmin - 1,
-                };
-                let right = Layer {
-                    ymax: self.ymax,
-                    ymin: self.ymin,
-                    zmin: self.zmax + 1,
-                    zmax: other.zmax,
-                    direction: other.direction.clone(),
-                };
-                let down = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: self.ymin - 1,
-                    ymin: other.ymin,
-                };
                 vec![up, left, right, down]
             }
             // bigger than us, we still take away a chunk (they are now three pieces)
             // we take away a part of their bottom
             (true, false, false, false) => {
-                let up = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: other.ymax,
-                    ymin: self.ymax + 1,
-                };
                 let left = Layer {
                     direction: other.direction.clone(),
                     ymax: self.ymax,
+                    // their left component extends below our top
                     ymin: other.ymin,
                     zmin: other.zmin,
                     zmax: self.zmin - 1,
                 };
                 let right = Layer {
                     ymax: self.ymax,
+                    // similarly, their right component extends below our top too
                     ymin: other.ymin,
                     zmin: self.zmax + 1,
                     zmax: other.zmax,
@@ -283,6 +278,8 @@ impl Layer {
             }
             // we take off their top
             (false, true, false, false) => {
+                // since we take off their top, our left and right are not sandwiched
+                // between up and down, so they have to extend
                 let left = Layer {
                     direction: other.direction.clone(),
                     ymax: other.ymax,
@@ -297,84 +294,22 @@ impl Layer {
                     zmax: other.zmax,
                     direction: other.direction.clone(),
                 };
-                let down = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: self.ymin - 1,
-                    ymin: other.ymin,
-                };
+
                 vec![left, right, down]
             }
             // we take off some of their left
             (false, false, true, false) => {
-                let up = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: other.ymax,
-                    ymin: self.ymax + 1,
-                };
-
-                let right = Layer {
-                    ymax: self.ymax,
-                    ymin: self.ymin,
-                    zmin: self.zmax + 1,
-                    zmax: other.zmax,
-                    direction: other.direction.clone(),
-                };
-                let down = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: self.ymin - 1,
-                    ymin: other.ymin,
-                };
                 vec![up, right, down]
             }
             // we take off some of their right
             (false, false, false, true) => {
-                let up = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: other.ymax,
-                    ymin: self.ymax + 1,
-                };
-                let left = Layer {
-                    direction: other.direction.clone(),
-                    ymax: self.ymax,
-                    ymin: self.ymin,
-                    zmin: other.zmin,
-                    zmax: self.zmin - 1,
-                };
-
-                let down = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: self.ymin - 1,
-                    ymin: other.ymin,
-                };
                 vec![up, left, down]
             }
             // they poke out in some direction, return that small piece
             // extends down
-            (false, true, true, true) => vec![Layer {
-                direction: other.direction.clone(),
-                zmin: other.zmin,
-                zmax: other.zmax,
-                ymax: self.ymin - 1,
-                ymin: other.ymin,
-            }],
+            (false, true, true, true) => vec![down],
             // extends up
-            (true, false, true, true) => vec![Layer {
-                direction: other.direction.clone(),
-                zmin: other.zmin,
-                zmax: other.zmax,
-                ymax: other.ymax,
-                ymin: self.ymax + 1,
-            }],
+            (true, false, true, true) => vec![up],
             // extends to the left
             (true, true, false, true) => vec![Layer {
                 direction: other.direction.clone(),
@@ -410,20 +345,6 @@ impl Layer {
                 vec![left, right]
             }
             (false, false, true, true) => {
-                let up = Layer {
-                    direction: other.direction.clone(),
-                    ymin: self.ymax + 1,
-                    ymax: other.ymax,
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                };
-                let down = Layer {
-                    direction: other.direction.clone(),
-                    ymin: other.ymin,
-                    ymax: self.ymin - 1,
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                };
                 vec![up, down]
             }
             // split into two smaller pieces
@@ -436,13 +357,6 @@ impl Layer {
                     zmin: other.zmin,
                     zmax: self.zmin - 1,
                 };
-                let down = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: self.ymin - 1,
-                    ymin: other.ymin,
-                };
                 vec![left, down]
             }
             // extends to lower right
@@ -454,24 +368,10 @@ impl Layer {
                     zmin: self.zmax + 1,
                     zmax: other.zmax,
                 };
-                let down = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: self.ymin - 1,
-                    ymin: other.ymin,
-                };
                 vec![right, down]
             }
             // extends to the upper left
             (true, false, false, true) => {
-                let up = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: other.ymax,
-                    ymin: self.ymax + 1,
-                };
                 let left = Layer {
                     direction: other.direction.clone(),
                     ymax: self.ymax,
@@ -483,13 +383,6 @@ impl Layer {
             }
             // extends to the upper right
             (true, false, true, false) => {
-                let up = Layer {
-                    direction: other.direction.clone(),
-                    zmin: other.zmin,
-                    zmax: other.zmax,
-                    ymax: other.ymax,
-                    ymin: self.ymax + 1,
-                };
                 let right = Layer {
                     direction: other.direction.clone(),
                     ymax: self.ymax,
