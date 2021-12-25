@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
 use advent_2021::regex;
-use itertools::Itertools;
 
 fn main() {
     println!("Hello, world!");

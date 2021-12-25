@@ -19,14 +19,6 @@ const SAMPLE: &str = r#"[({(<(())[]>[[{[]{<()<>>
 
 type Part1 = usize;
 
-fn parse(input: &str) -> Vec<usize> {
-    use advent_2021::regex;
-    let re = regex!(r"(\d+)");
-    re.captures_iter(input)
-        .map(|capture| capture[0].parse().unwrap())
-        .collect()
-}
-
 fn part1(input: &str) -> Part1 {
     let bounty: HashMap<char, usize> =
         HashMap::from_iter(vec![(')', 3), (']', 57), ('}', 1197), ('>', 25137)]);
@@ -80,7 +72,7 @@ fn part2(input: &str) -> Part2 {
             let mut stack = vec![];
             for char in line.chars() {
                 if bounty.contains_key(&char) {
-                    if dbg!(&stack).last().unwrap() == &pairs[&char] {
+                    if stack.last().unwrap() == &pairs[&char] {
                         stack.pop();
                     } else {
                         return None;
@@ -111,5 +103,5 @@ fn tpart2_sample() {
 #[test]
 fn tpart2() {
     let input = std::fs::read_to_string("inputs/day10.txt").unwrap();
-    assert_eq!(part2(&input), Part2::default())
+    assert_eq!(part2(&input), 4263222782)
 }
