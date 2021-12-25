@@ -1021,5 +1021,5 @@ fn tpart2_sample() {
 #[test]
 fn tpart2() {
     let input = std::fs::read_to_string(INPUT_PATH).unwrap();
-    assert_eq!(part2(&input), Part2::default())
+    assert_eq!(part2(&input), 53767)
 }
