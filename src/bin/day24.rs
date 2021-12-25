@@ -1,4 +1,5 @@
 use advent_2021::blank_lines;
+use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 
 use itertools::Itertools;
@@ -92,6 +93,8 @@ impl<'a> Alu<'a> {
         }
         inner(starting_point, &memo)
     }
+    /// Given a list of instruction chunks, return a backtrack map to get to a specific value in the `z` variable at a certain time period. Note: this implentation is based on specific input knolwedge that all of the other variables besides `z` are reset per chunk.
+    /// This means that we only have to keep track of input (`1--9`) and previous `z` value pairs.
     fn golden_path(
         instructions: &[Vec<Instructions<'a>>],
     ) -> HashMap<(usize, i64), Vec<(u8, i64)>> {
@@ -100,17 +103,26 @@ impl<'a> Alu<'a> {
         for (count, block) in instructions.iter().enumerate() {
             let mut new_possibilities = HashSet::new();
 
-            for z_value in z_possibilities {
-                for input in 1_u8..=9 {
-                    let mut alu = Alu::new_with_z(z_value);
-                    let input_i = std::iter::once(input as i64);
-                    alu.run(&block, input_i);
-                    let resulting_z = alu.registers["z"];
-                    memo.entry((count, resulting_z))
-                        .or_insert(vec![])
-                        .push((input, z_value));
-                    new_possibilities.insert(resulting_z);
-                }
+            // collect into a vec, since rayon doesn't support iteration
+            let results = z_possibilities
+                .into_par_iter()
+                .flat_map(|z_value| {
+                    (1_u8..=9)
+                        .map(|input| {
+                            let mut alu = Alu::new_with_z(z_value);
+                            let input_i = std::iter::once(input as i64);
+                            alu.run(&block, input_i);
+                            let resulting_z = alu.registers["z"];
+                            (input, z_value, resulting_z)
+                        })
+                        .collect_vec()
+                })
+                .collect::<Vec<_>>();
+            for (input, z_value, resulting_z) in results {
+                memo.entry((count, resulting_z))
+                    .or_insert(vec![])
+                    .push((input, z_value));
+                new_possibilities.insert(resulting_z);
             }
 
             z_possibilities = new_possibilities;
