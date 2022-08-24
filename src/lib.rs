@@ -30,6 +30,13 @@ pub fn blank_lines(s: &str) -> Vec<Vec<&str>> {
     agg
 }
 
+pub fn commas(s: &str) -> Vec<&str> {
+    s.split(',').collect()
+}
+pub fn lines(s: &str) -> Vec<&str> {
+    s.lines().collect()
+}
+
 /// # Examples
 /// ```
 /// # use advent_2021::manhattan_distance;
@@ -69,6 +76,40 @@ where
 /// ```
 pub fn digits(num: &str) -> Vec<u32> {
     num.chars().map(|c| c.to_digit(10).unwrap()).collect()
+}
+
+pub fn number_digits(num: usize) -> Vec<u32> {
+    digits(&num.to_string())
+}
+
+/// # Examples
+/// ```
+/// # use advent_2021::number_to_binary;
+/// assert_eq!(number_to_binary(1), vec![1]);
+/// assert_eq!(number_to_binary(2), vec![1, 0]);
+/// ```
+pub fn number_to_binary(num: usize) -> Vec<u32> {
+    format!("{:b}", num)
+        .chars()
+        .map(|c| c.to_digit(2).unwrap())
+        .collect()
+}
+
+/// # Examples
+/// ```
+/// # use advent_2021::{number_to_binary, pad_vectors};
+/// assert_eq!(pad_vectors(&[number_to_binary(1), number_to_binary(2)], 0), vec![vec![0, 1], vec![1, 0]]);
+/// ```
+pub fn pad_vectors<T: Clone>(vs: &[Vec<T>], padding: T) -> Vec<Vec<T>> {
+    let max_length = vs.iter().map(|v| v.len()).max().unwrap();
+    vs.iter()
+        .map(|v| {
+            let line = v.clone();
+            let mut prefix = vec![padding.clone(); max_length - line.len()];
+            prefix.extend_from_slice(&line);
+            prefix
+        })
+        .collect()
 }
 
 // could add lines, commas, spaces, memoize, regex things next
